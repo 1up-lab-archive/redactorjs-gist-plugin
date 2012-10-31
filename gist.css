@@ -4,6 +4,7 @@
     background-repeat:no-repeat;
     line-height:16px;
     padding-left:20px;
+    color:#999;
 }
 
 body .redactor_toolbar li a.redactor_btn_gist {

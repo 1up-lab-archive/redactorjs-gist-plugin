@@ -16,7 +16,7 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
 		        var hasSelection = selection.length > 0;
 		        
 		        // will be undefined if not a number or gist url
-		        var gistCode = hasSelection ? me.addGistBySelection(selection) : me.addGistByModal();
+		        var gistCode = hasSelection ? me.getGistNumber(selection) : me.addGistByModal(obj);
 		        
 		        if(typeof gistCode !== 'undefined')
 		        {
@@ -25,7 +25,7 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
 		    });
         },
         
-        addGistBySelection: function(selection)
+        getGistNumber: function(selection)
         {
             if(typeof selection === 'Number' && selection % 1 == 0)
             {
@@ -45,9 +45,31 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
             return undefined;
         },
         
-        addGistByModal: function()
+        addGistByModal: function(obj)
         {
-            throw "NotImplementedYet";
+            var me = this;
+            
+            var callback = $.proxy(function()
+            {
+                me.saveSelection();
+                $('#gist-modal-url').focus();
+                
+                $("#redactor_modal #gist-modal-link").click($.proxy(function()
+                {
+                    var gistCode = me.getGistNumber($('#gist-modal-url').val());
+                    
+                    if(typeof gistCode !== 'undefined')
+                    {
+                        me.restoreSelection();
+                        obj.insertHtml(me.getGistTemplate(gistCode));   
+                    }
+                    
+                    me.modalClose();
+                    
+                }, this));
+            });
+            
+            obj.modalInit('To add Gist from Github insert a gist url.', this.getModalTemplate(), 500, callback);
         },
         
         getGistTemplate: function(gistCode)
@@ -58,6 +80,19 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
                 <scr" + "ipt src=\"" + url + "\"></script></p>";
             
             return script;
+        },
+        
+        getModalTemplate: function()
+        {
+            var tmpl = "<div id=\"gist-modal\">\
+                <div id=\"redactor_modal_content\">\
+                    <p>\
+                        <input type=\"text\" id=\"gist-modal-url\"/>\
+                        <button class=\"redactor_modal_btn\" id=\"gist-modal-link\">Insert</button>\
+                    </p>\
+                </div>";
+            
+            return tmpl;
         }
     };
     
