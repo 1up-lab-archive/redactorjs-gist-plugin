@@ -129,7 +129,10 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
                         // where we have to insert the gist
                         // template.
                         me.restoreSelection();
-                        obj.insertHtml(me.getGistTemplate(gistCode));   
+                        obj.insertHtml(me.getGistTemplate(gistCode));
+                        
+                        // bitchy you.
+                        me.syncCode();
                     }
                     
                     // close the modal window after clicking "insert"
