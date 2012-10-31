@@ -1,6 +1,6 @@
 if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
 
-(function(plugins)
+(function(plugins, $)
 {
     "use strict"
     
@@ -12,7 +12,7 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
             
             this.addBtnAfter('link', 'gist', 'Add Gist', function(obj)
 		    {
-		        var selection    = me.getSelectedHtml();
+		        var selection = me.getSelectedHtml();
 		        var hasSelection = selection.length > 0;
 		        
 		        // will be undefined if not a number or gist url
@@ -22,8 +22,6 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
 		        {
 			        obj.insertHtml(me.getGistTemplate(gistCode));
 			    }
-			    
-			    me.syncCode();
 		    });
         },
         
@@ -63,4 +61,4 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
         }
     };
     
-})(RedactorPlugins);
+})(RedactorPlugins, jQuery);
