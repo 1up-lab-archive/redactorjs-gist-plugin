@@ -18,12 +18,22 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
 		        // will be undefined if not a number or gist url
 		        var gistCode = hasSelection ? me.addGistBySelection(selection) : me.addGistByModal();
 		        
-			    //obj.insertHtml('gist!');
+		        if(typeof gistCode !== 'undefined')
+		        {
+			        obj.insertHtml(me.getGistTemplate(gistCode));
+			    }
+			    
+			    me.syncCode();
 		    });
         },
         
         addGistBySelection: function(selection)
         {
+            if(typeof selection === 'Number' && selection % 1 == 0)
+            {
+                return selection;
+            }
+            
             var parser = document.createElement('a');
             parser.href = selection;
             
@@ -39,12 +49,17 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
         
         addGistByModal: function()
         {
-            console.log("by modal");
+            throw "NotImplementedYet";
         },
         
         getGistTemplate: function(gistCode)
         {
+            var url = "https://gist.github.com/" + gistCode + ".js";
+            var script = "<p class=\"github-gist\"> \
+                <span style=\"display:none\">gist:" + gistCode + "</span> \
+                <scr" + "ipt src=\"" + url + "\"></script></p>";
             
+            return script;
         }
     };
     
