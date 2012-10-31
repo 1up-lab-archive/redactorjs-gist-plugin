@@ -25,10 +25,17 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
 {
     "use strict"
     
+    // this is our plugin object named gist in the
+    // RedactorPlugins namespace
     plugins.gist = {
         
+        // this is the initializer of this plugin
+        // it will automatically be called after
+        // RedactorJS has finished loading its core
         init: function()
         {
+            // save a reference to this very object
+            // so we can use it later in our callback
             var me = this;
             
             this.addBtnAfter('link', 'gist', 'Add Gist', function(obj)
@@ -46,33 +53,69 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
 		    });
         },
         
+        // extract the gist number out of a selection string
+        // this can either be a valid github url with the hostname
+        // being exactly "gist.github.com" or just a numerical
+        // id. there is no further test if a given id is a valid
+        // gist file. as long as you provide something that could
+        // be correct, it will parse it like it is.
         getGistNumber: function(selection)
         {
+            // check if the selection string is already
+            // a valid number. in that case return it right away
+            // as we can assume that we have a correct gist id
             if(typeof selection === 'Number' && selection % 1 == 0)
             {
                 return selection;
             }
             
+            // thanks to gist, I found a way to parse a url
+            // without having to use extensive regex matching
+            // thx jlong! https://gist.github.com/2428561
             var parser = document.createElement('a');
             parser.href = selection;
             
+            // proceed if hostname matches
+            // otherwise it is not a valid gist url
             if(parser.hostname === "gist.github.com")
             {
+                // replace all slashes with nothing and parse to
+                // integer by two bitwise not operations
+                // a very hipster way!
                 var gistCode = ~~parser.pathname.replace('/', '');
                 
                 return gistCode > 0 ? gistCode : undefined;
             }
             
+            // if this function wasn't really helpful
+            // return undefined so we can check on that
+            // later on
             return undefined;
         },
         
+        // if the button in the menu of RedactorJS has been
+        // clicked without a selection in the text, show
+        // a modal window with an input field, where the 
+        // user can provide a gist url
         addGistByModal: function(obj)
         {
             var me = this;
             
+            // initialize a callback function which will
+            // be fired after the modal window has been
+            // loaded
             var callback = $.proxy(function()
             {
+                // we have to save our current cursor
+                // position, due to the fact that we
+                // have to insert our resulting script
+                // object at this very position
                 me.saveSelection();
+                
+                // autofocus the url field in the modal
+                // window. without that a user could write
+                // on in the textarea of the editor, after
+                // opening the modal
                 $('#gist-modal-url').focus();
                 
                 $("#redactor_modal #gist-modal-link").click($.proxy(function()
@@ -81,10 +124,16 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
                     
                     if(typeof gistCode !== 'undefined')
                     {
+                        // restore the previous saved cursor
+                        // position to the editor, so we know
+                        // where we have to insert the gist
+                        // template.
                         me.restoreSelection();
                         obj.insertHtml(me.getGistTemplate(gistCode));   
                     }
                     
+                    // close the modal window after clicking "insert"
+                    // and parsing of the url
                     me.modalClose();
                     
                 }, this));
@@ -93,6 +142,13 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
             obj.modalInit('To add Gist from Github insert a gist url.', this.getModalTemplate(), 500, callback);
         },
         
+        // provide a numerical gist id and assemble a string
+        // representation of a dom-element to insert into editor
+        // window afterwards.
+        // it consists of two parts. the first one is a <span /> element
+        // which is the representation of the gist in the editor (as it
+        // won't show up there).
+        // the second one is the script with the gist url
         getGistTemplate: function(gistCode)
         {
             var url = "https://gist.github.com/" + gistCode + ".js";
@@ -103,6 +159,8 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
             return script;
         },
         
+        // returns the modal window content, including an input
+        // field and little button. nothing fancy here.
         getModalTemplate: function()
         {
             var tmpl = "<div id=\"gist-modal\">\
