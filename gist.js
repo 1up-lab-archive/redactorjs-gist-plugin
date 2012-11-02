@@ -39,18 +39,18 @@ if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
             var me = this;
             
             this.addBtnAfter('link', 'gist', 'Add Gist', function(obj)
-		    {
-		        var selection = me.getSelectedHtml();
-		        var hasSelection = selection.length > 0;
-		        
-		        // will be undefined if not a number or gist url
-		        var gistCode = hasSelection ? me.getGistNumber(selection) : me.addGistByModal(obj);
-		        
-		        if(typeof gistCode !== 'undefined')
-		        {
-			        obj.insertHtml(me.getGistTemplate(gistCode));
-			    }
-		    });
+            {
+                var selection = me.getSelectedHtml();
+                var hasSelection = selection.length > 0;
+
+                // will be undefined if not a number or gist url
+                var gistCode = hasSelection ? me.getGistNumber(selection) : me.addGistByModal(obj);
+
+                if(typeof gistCode !== 'undefined')
+                {
+                    obj.insertHtml(me.getGistTemplate(gistCode));
+                }
+            });
         },
         
         // extract the gist number out of a selection string
