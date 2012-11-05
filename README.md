@@ -1,3 +1,5 @@
+This plugin has still some serious flaws! A list can be found on the bottom of this readme.
+
 Gist plugin for Redactor WYSIWYG-Editor
 ===
 
@@ -44,6 +46,8 @@ That's all! No additional assets like images needed. They are integrated inline 
 
 Known Flaws
 ---
+* This plugin does not work on the current community-version of RedactorJS as it does not support plugins.
+* There is still a bug when loading the editor with gist script-tags in the content, as they will be stripped. Hey RedactorJS-devs: post-submit hooks would be nice. Consider that.
 * When pasting a Gist-URL to the editor and forget to unlink the element, the gist itself will be clickable, because the surrounding link is not removed. If you have an idea how to work around this flaw, drop me line!
 * Templating could be nicer. Working with DOM-Elements instead of string-values for example.
 
